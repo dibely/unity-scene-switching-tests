@@ -21,7 +21,7 @@ public class UnloadScene : MonoBehaviour, ITriggerable {
         Scene scene = SceneManager.GetSceneByName(sceneName);
 
         if (scene.isLoaded) {
-            StartCoroutine("UnloadSceneAsync");
+            StartCoroutine(UnloadSceneAsync(scene));
         }
         else {
             Debug.LogWarning("Scene " + sceneName + " is not loaded yet when trying to unload");
@@ -29,14 +29,14 @@ public class UnloadScene : MonoBehaviour, ITriggerable {
     }
 
     // Unloads a scene asynchronously
-    IEnumerator UnloadSceneAsync() {
-        Debug.Log("Unloading scene " + sceneName);
+    IEnumerator UnloadSceneAsync(Scene scene) {
+        Debug.Log("Unloading scene " + scene.name);
 
         // Unload scene
-        AsyncOperation sceneAsyncOperation = SceneManager.UnloadSceneAsync(sceneName);
+        AsyncOperation sceneAsyncOperation = SceneManager.UnloadSceneAsync(scene);
 
         while (!sceneAsyncOperation.isDone) {
-            Debug.Log("Waiting for scene " + sceneName + " to unload");
+            Debug.Log("Waiting for scene " + scene.name + " to unload");
             yield return new WaitForSeconds(.1f);
         }
 

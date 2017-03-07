@@ -22,18 +22,18 @@ public class LoadScene : MonoBehaviour, ITriggerable {
         Scene scene = SceneManager.GetSceneByName(sceneName);
 
         if (!scene.isLoaded) {
-            StartCoroutine("LoadSceneAsyncAndSetActive");
+            StartCoroutine(LoadSceneAsyncAndSetActive(sceneName));
         }
         else {
             Debug.LogWarning("Scene " + sceneName + " is already loaded.");
             if (setSceneActive && (SceneManager.GetActiveScene() != scene)) {
-                SetSceneActive();
+                SetSceneActive(scene);
             }
         }
     }
 
     // Loads a scene Asynchronously and once complete will set the scene active if necessary
-    IEnumerator LoadSceneAsyncAndSetActive() {
+    IEnumerator LoadSceneAsyncAndSetActive(string sceneName) {
         Debug.Log("Loading scene " + sceneName);
 
         AsyncOperation sceneAsyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
@@ -52,15 +52,14 @@ public class LoadScene : MonoBehaviour, ITriggerable {
         }
 
         if (setSceneActive) {
-            SetSceneActive();
+            SetSceneActive(SceneManager.GetSceneByName(sceneName));
         }
     }
 
     // Sets the specified scene active
-    private void SetSceneActive() {
-        Debug.Log("Setting scene " + sceneName + " active");
-        Scene theScene = SceneManager.GetSceneByName(sceneName);
-        SceneManager.SetActiveScene(theScene);
+    private void SetSceneActive(Scene scene) {
+        Debug.Log("Setting scene " + scene.name + " active");
+        SceneManager.SetActiveScene(scene);
     }
 
 
