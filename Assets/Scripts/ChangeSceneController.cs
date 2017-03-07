@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,7 +29,7 @@ public class ChangeSceneController : MonoBehaviour {
     private void ChangeScene() {
 
         if(string.IsNullOrEmpty(nextScene)) {
-            Debug.Log("Invalid next scene");
+            Debug.LogError("Invalid next scene");
             return;
         }
 
@@ -40,7 +39,7 @@ public class ChangeSceneController : MonoBehaviour {
             StartCoroutine("LoadSceneAndSetActive");
         }
         else {
-            Debug.Log("Scene "+nextScene+" is already loaded.");
+            Debug.LogWarning("Scene "+nextScene+" is already loaded.");
             if (setSceneActive && (SceneManager.GetActiveScene() != scene)) {
                 SceneManager.SetActiveScene(scene);
             }
@@ -74,11 +73,11 @@ public class ChangeSceneController : MonoBehaviour {
                 Debug.Log("Unloading scene " + previousScene);
                 AsyncOperation previousSceneAsyncOperation = SceneManager.UnloadSceneAsync(previousScene);
 
-                /*
                 while (!previousSceneAsyncOperation.isDone) {
+                    Debug.Log("Waiting for scene " + previousScene + " to unload");
                     yield return new WaitForSeconds(.1f);
                 }
-                */
+
                 Debug.Log("Scene " + previousScene + " unloaded");
 
             }
