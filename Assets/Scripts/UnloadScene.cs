@@ -1,53 +1,32 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class UnloadScene : MonoBehaviour, ITriggerable {
+public class UnloadScene : MonoBehaviour, ITriggerable, ISceneUnloadEvents {
     public string sceneName;
+    private UnloadSceneController unloadSceneController = new UnloadSceneController();
  
-    // Use this for initialization
-    void Start () {}
-	
-	// Update is called once per frame
-	void Update () {}
-
-    // Main entry point for unloading a scene
-    private void PerformUnloadScene() {
-        if (string.IsNullOrEmpty(sceneName)) {
-            Debug.LogError("Invalid scene name specified");
-            return;
-        }
-
-        Scene scene = SceneManager.GetSceneByName(sceneName);
-
-        if (scene.isLoaded) {
-            StartCoroutine(UnloadSceneAsync(scene));
-        }
-        else {
-            Debug.LogWarning("Scene " + sceneName + " is not loaded yet when trying to unload");
-        }
+    void OnEnable() {
+        unloadSceneController.OnSceneUnloaded += OnSceneUnloaded;
     }
 
-    // Unloads a scene asynchronously
-    IEnumerator UnloadSceneAsync(Scene scene) {
-        Debug.Log("Unloading scene " + scene.name);
-
-        // Unload scene
-        AsyncOperation sceneAsyncOperation = SceneManager.UnloadSceneAsync(scene);
-
-        while (!sceneAsyncOperation.isDone) {
-            Debug.Log("Waiting for scene " + scene.name + " to unload");
-            yield return new WaitForSeconds(.1f);
-        }
-
-        Debug.Log("Scene " + sceneName + " unloaded");
+    void OnDisable() {
+        unloadSceneController.OnSceneUnloaded -= OnSceneUnloaded;
     }
+
+    // Update is called once per frame
+    void Update () {}
 
     // ITriggerable methods
 
     public void Activate() {
-        PerformUnloadScene();
+        unloadSceneController.UnloadScene(sceneName, this);
     }
 
     public void Deactivate() { }
+
+    // ISceneUnloadEvents methods
+    public void OnSceneUnloaded(Scene scene) {
+        Debug.Log("UnloadScene: scene " + scene.name+ " unloaded");
+    }
+
 }
